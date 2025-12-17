@@ -37,8 +37,8 @@
    ```
 4) 访问：浏览器打开 http://localhost:8501
 
-## 可选：离线数据采集（crawler）
-项目提供离线采集脚本 `tools/offline_job_crawl.py`，用于生成/补充本地职位库（非主流程依赖）。
+## 可选：离线数据采集
+离线采集脚本 `tools/offline_job_crawl.py`，用于生成/补充本地职位库（非主流程依赖）。
 
 1) 安装 Playwright 浏览器：
    ```bash
