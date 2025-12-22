@@ -684,10 +684,3 @@ elif st.session_state.current_step == "analysis":
             for module_key in module_order:
                 render_module_editor(module_key, editing_data, module_suggestions)
 
-
-# 页脚
-st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: gray;'>Made with ❤️ by Auto-Resume Agent | Powered by LangGraph</div>",
-    unsafe_allow_html=True,
-)
