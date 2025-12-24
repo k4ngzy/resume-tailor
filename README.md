@@ -6,6 +6,9 @@ Resume Tailor is a resume optimization tool built on large language models and o
 
 By introducing a retrieval-augmented mechanism, the system supplies clear, user-aligned target constraints for resume rewriting. This effectively reduces uncontrolled expansion and semantic drift commonly seen when relying solely on prompts, avoiding large, unstable rewrites.
 
+## Video
+<https://github.com/user-attachments/assets/fc92f3b3-8cde-43ff-8d20-7ef7afbebd69>
+
 ## ✨ Features
 
 1. Retrieval-Augmented Generation (RAG) based on an offline job database
@@ -77,8 +80,8 @@ start.sh          One-click startup script
 
 This project includes LaTeX resume templates adapted from the following repositories:
 
-- **template1**: based on https://github.com/hijiangtao/resume
-- **template2**: based on https://github.com/luooofan/resume
+- **template1**: based on <https://github.com/hijiangtao/resume>
+- **template2**: based on <https://github.com/luooofan/resume>
 
 Thanks to the original authors for sharing their work.
 
