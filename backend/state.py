@@ -18,6 +18,7 @@ def get_or_create_session(session_id: str) -> Dict[str, Any]:
                 "selected_jobs": [],
                 "job_results": [],
                 "url": "",
+                "custom_jd": "",
             },
             "current_step": "form",
         }

@@ -72,15 +72,18 @@ def search_jobs(except_job: dict):
         return False, f"错误: {str(e)}", []
 
 
-def comprehensive_evaluation(selected_job_indices: list):
+def comprehensive_evaluation(selected_job_indices: list, custom_jd: str | None = None):
     """综合评估所有选中的岗位"""
     try:
+        payload = {
+            "session_id": st.session_state.session_id,
+            "job_indices": selected_job_indices,
+        }
+        if custom_jd:
+            payload["custom_jd"] = custom_jd
         response = requests.post(
             f"{API_BASE_URL}/api/comprehensive_evaluation",
-            json={
-                "session_id": st.session_state.session_id,
-                "job_indices": selected_job_indices,
-            },
+            json=payload,
         )
         response.raise_for_status()
         data = response.json()

@@ -42,6 +42,26 @@ def read_jobs_from_results(job_results: List[Dict[str, Any]], job_indices: List[
     return selected_jobs
 
 
+def build_custom_job_entries(custom_jd: str) -> List[Dict[str, Any]]:
+    """
+    将用户自定义 JD 封装成职位格式，便于复用现有格式化逻辑。
+
+    Args:
+        custom_jd: 用户输入的 JD 文本
+
+    Returns:
+        单条职位数据列表
+    """
+    cleaned_jd = custom_jd.strip()
+    return [
+        {
+            "职位名称": "用户自定义JD",
+            "公司名称": "用户提供",
+            "岗位描述": cleaned_jd,
+        }
+    ]
+
+
 def format_jobs_summary(selected_jobs: List[Dict[str, Any]]) -> str:
     """
     格式化职位信息为简洁摘要

@@ -9,6 +9,7 @@ class ResumeDataRequest(BaseModel):
 class ComprehensiveEvaluationRequest(BaseModel):
     session_id: str
     job_indices: list[int]
+    custom_jd: str | None = None
 
 
 class ModifyResumeModuleRequest(BaseModel):

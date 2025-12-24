@@ -19,6 +19,7 @@ from backend.schemas import (
 )
 from backend.state import add_ids_to_resume_data, get_or_create_session, sessions
 from backend.utils import (
+    build_custom_job_entries,
     format_jobs_detail,
     format_jobs_summary,
     format_module_data,
@@ -189,20 +190,23 @@ async def comprehensive_evaluation(request: ComprehensiveEvaluationRequest):
         raise HTTPException(status_code=404, detail="会话不存在")
 
     session = sessions[request.session_id]
+    custom_jd = (request.custom_jd or "").strip()
 
     # 获取简历数据
     resume_data = session["state"].get("resume_data")
     if not resume_data:
         raise HTTPException(status_code=400, detail="简历数据不存在")
 
-    # 获取职位数据路径
+    # 获取职位数据路径（自定义 JD 可跳过）
     job_results = session["state"].get("job_results", [])
-    if not job_results:
+    if not custom_jd and not job_results:
         raise HTTPException(status_code=400, detail="职位数据不存在")
 
     try:
-        # 读取所有选中的岗位
+        # 读取所有选中的岗位，并按需附加自定义 JD
         selected_jobs = read_jobs_from_results(job_results, request.job_indices)
+        if custom_jd:
+            selected_jobs = selected_jobs + build_custom_job_entries(custom_jd)
 
         # 将简历数据转换为文本
         resume_text = json.dumps(resume_data, ensure_ascii=False, indent=2)
@@ -215,10 +219,11 @@ async def comprehensive_evaluation(request: ComprehensiveEvaluationRequest):
         system_prompt = PromptTemplates.get_comprehensive_evaluation_prompt()
         sys_msg = SystemMessage(content=system_prompt)
 
+        job_label = "选中的岗位与自定义JD" if custom_jd else "选中的岗位"
         user_msg = HumanMessage(
             content=(
                 f"## 用户简历\n```json\n{resume_text}\n```\n\n"
-                f"## 选中的岗位（共 {jobs_count} 个）\n{jobs_text}\n\n"
+                f"## {job_label}（共 {jobs_count} 个）\n{jobs_text}\n\n"
                 "请进行综合评估，并给出优化建议。"
             )
         )
@@ -233,6 +238,7 @@ async def comprehensive_evaluation(request: ComprehensiveEvaluationRequest):
             # 保存到会话
             session["state"]["evaluation_report"] = evaluation_report
             session["state"]["selected_jobs"] = selected_jobs
+            session["state"]["custom_jd"] = custom_jd or ""
             session["current_step"] = "analysis"
 
             return {
@@ -253,6 +259,7 @@ async def comprehensive_evaluation(request: ComprehensiveEvaluationRequest):
 
             session["state"]["evaluation_report"] = fallback_report
             session["state"]["selected_jobs"] = selected_jobs
+            session["state"]["custom_jd"] = custom_jd or ""
             session["current_step"] = "analysis"
 
             return {
@@ -281,7 +288,11 @@ async def modify_resume_module(request: ModifyResumeModuleRequest):
     # 获取选中的岗位信息
     selected_jobs = session["state"].get("selected_jobs", [])
     if not selected_jobs:
-        raise HTTPException(status_code=400, detail="未找到选中的岗位信息")
+        custom_jd = (session["state"].get("custom_jd") or "").strip()
+        if custom_jd:
+            selected_jobs = build_custom_job_entries(custom_jd)
+        else:
+            raise HTTPException(status_code=400, detail="未找到选中的岗位信息")
 
     # 获取简历数据用于生成新模块
     resume_data = session["state"].get("resume_data", {})
@@ -395,7 +406,11 @@ async def re_evaluate_module(request: ModifyResumeModuleRequest):
     # 获取选中的岗位信息
     selected_jobs = session["state"].get("selected_jobs", [])
     if not selected_jobs:
-        raise HTTPException(status_code=400, detail="未找到选中的岗位信息")
+        custom_jd = (session["state"].get("custom_jd") or "").strip()
+        if custom_jd:
+            selected_jobs = build_custom_job_entries(custom_jd)
+        else:
+            raise HTTPException(status_code=400, detail="未找到选中的岗位信息")
 
     try:
         # 格式化岗位信息

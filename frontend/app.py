@@ -75,6 +75,9 @@ if "current_page" not in st.session_state:
 # 候选池（用户选中的岗位索引列表）
 if "candidate_pool" not in st.session_state:
     st.session_state.candidate_pool = []
+# 用户自定义 JD
+if "custom_jd" not in st.session_state:
+    st.session_state.custom_jd = ""
 
 
 # ==================== UI ====================
@@ -402,6 +405,19 @@ elif st.session_state.current_step == "job_search":
     if st.session_state.jobs_loaded and st.session_state.jobs:
         st.markdown("---")
 
+        st.subheader("🧾 自定义 JD（可选）")
+        st.markdown("如果你有自己的 JD，可以直接粘贴；也可以与推荐岗位一起用于分析。")
+        st.session_state.custom_jd = st.text_area(
+            "粘贴 JD 文本",
+            value=st.session_state.custom_jd,
+            placeholder="例如：岗位职责、任职要求、技术栈等",
+            height=180,
+        )
+        if st.session_state.custom_jd.strip():
+            st.info("已检测到自定义 JD，可与推荐岗位一起用于分析。")
+
+        st.markdown("---")
+
         # 候选池展示
         if st.session_state.candidate_pool:
             st.subheader("🎯 候选池")
@@ -502,22 +518,23 @@ elif st.session_state.current_step == "job_search":
         st.markdown("---")
 
         # 继续按钮
+        has_custom_jd = bool(st.session_state.custom_jd.strip())
         if st.session_state.candidate_pool:
             st.success(f"✅ 候选池中有 {len(st.session_state.candidate_pool)} 个岗位")
+        elif not has_custom_jd:
+            st.warning("请至少添加一个岗位到候选池，或填写自定义 JD")
 
-            if st.button("📊 开始匹配度分析", width="stretch", type="primary"):
-                # 将候选池的岗位复制到 selected_jobs
-                st.session_state.selected_jobs = st.session_state.candidate_pool.copy()
-                st.session_state.current_step = "analysis"
-                st.rerun()
-        else:
-            st.warning("请至少添加一个岗位到候选池")
+        if st.button("📊 开始匹配度分析", width="stretch", type="primary"):
+            st.session_state.selected_jobs = st.session_state.candidate_pool.copy()
+            st.session_state.current_step = "analysis"
+            st.rerun()
 
 # Step 4: 综合评估与简历编辑
 elif st.session_state.current_step == "analysis":
     st.header("📊 Step 4: 综合评估与简历优化")
 
-    if not st.session_state.selected_jobs:
+    has_custom_jd = bool(st.session_state.custom_jd.strip())
+    if not st.session_state.selected_jobs and not has_custom_jd:
         st.warning("未选择任何岗位")
         if st.button("返回"):
             st.session_state.current_step = "job_search"
@@ -531,15 +548,22 @@ elif st.session_state.current_step == "analysis":
         if not st.session_state.evaluation_report:
             st.info(f"准备对 {len(st.session_state.selected_jobs)} 个岗位进行综合评估")
 
-            # 显示选中的岗位
-            with st.expander("📋 已选择的岗位", expanded=True):
-                for job_idx in st.session_state.selected_jobs:
-                    job = st.session_state.jobs[job_idx]
-                    st.markdown(f"- **{job['name']}** @ {job['company']} | {job['salary']}")
+            # 显示选中的岗位与自定义 JD
+            if st.session_state.selected_jobs:
+                with st.expander("📋 已选择的岗位", expanded=True):
+                    for job_idx in st.session_state.selected_jobs:
+                        job = st.session_state.jobs[job_idx]
+                        st.markdown(f"- **{job['name']}** @ {job['company']} | {job['salary']}")
+            if has_custom_jd:
+                with st.expander("📋 自定义 JD", expanded=not st.session_state.selected_jobs):
+                    st.markdown(st.session_state.custom_jd)
 
             if st.button("🚀 开始综合评估", width="stretch", type="primary"):
                 with st.spinner("正在进行综合评估，请稍候..."):
-                    success, message, report = comprehensive_evaluation(st.session_state.selected_jobs)
+                    success, message, report = comprehensive_evaluation(
+                        st.session_state.selected_jobs,
+                        st.session_state.custom_jd.strip() or None,
+                    )
 
                     if success:
                         st.session_state.evaluation_report = report
