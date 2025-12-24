@@ -25,7 +25,7 @@ def escape_latex(text):
     return result
 
 
-def generate_classic_header(basic_info, has_photo=False):
+def generate_template1_header(basic_info, has_photo=False):
     """生成经典模板的头部"""
     name = escape_latex(basic_info.get("name", ""))
     gender = escape_latex(basic_info.get("gender", ""))
@@ -75,7 +75,7 @@ def generate_classic_header(basic_info, has_photo=False):
 \\contactInfo{line2}"""
 
 
-def generate_modern_header(basic_info, has_photo=False):
+def generate_template2_header(basic_info, has_photo=False):
     """生成现代模板的头部"""
     name = escape_latex(basic_info.get("name", ""))
     gender = escape_latex(basic_info.get("gender", ""))
@@ -150,12 +150,12 @@ def generate_modern_header(basic_info, has_photo=False):
 }}"""
 
 
-def generate_education_section(education_list, template_type="classic"):
+def generate_education_section(education_list, template_type="template1"):
     """生成教育背景部分"""
     if not education_list:
         return ""
 
-    if template_type == "classic":
+    if template_type == "template1":
         section = "\\section{教育背景}\n"
         for edu in education_list:
             school = escape_latex(edu.get("school", ""))
@@ -171,7 +171,7 @@ def generate_education_section(education_list, template_type="classic"):
             if courses:
                 section += f" \\ 相关课程: {courses}\n"
         return section
-    else:  # modern
+    else:  # template2
         section = "\\sectionTitle{教育背景}{\\faiconsixbf{graduation-cap}}\n"
         for edu in education_list:
             school = escape_latex(edu.get("school", ""))
@@ -192,12 +192,12 @@ def generate_education_section(education_list, template_type="classic"):
         return section
 
 
-def generate_work_section(work_list, template_type="classic", section_title="工作经历"):
+def generate_work_section(work_list, template_type="template1", section_title="工作经历"):
     """生成工作经历部分"""
     if not work_list:
         return ""
 
-    if template_type == "classic":
+    if template_type == "template1":
         section = f"\\section{{{section_title}}}\n"
         for work in work_list:
             company = escape_latex(work.get("company", ""))
@@ -212,7 +212,7 @@ def generate_work_section(work_list, template_type="classic", section_title="工
                     section += f"  \\item {escape_latex(point)}\n"
                 section += "\\end{itemize}\n"
         return section
-    else:  # modern
+    else:  # template2
         section = f"\\sectionTitle{{{section_title}}}{{\\faiconsixbf{{building-user}}}}\n"
         for work in work_list:
             company = escape_latex(work.get("company", ""))
@@ -229,7 +229,7 @@ def generate_work_section(work_list, template_type="classic", section_title="工
         return section
 
 
-def generate_internship_section(internship_list, template_type="classic"):
+def generate_internship_section(internship_list, template_type="template1"):
     """生成实习经历部分"""
     if not internship_list:
         return ""
@@ -237,12 +237,12 @@ def generate_internship_section(internship_list, template_type="classic"):
     return generate_work_section(internship_list, template_type, section_title="实习经历")
 
 
-def generate_project_section(project_list, template_type="classic"):
+def generate_project_section(project_list, template_type="template1"):
     """生成项目经历部分"""
     if not project_list:
         return ""
 
-    if template_type == "classic":
+    if template_type == "template1":
         section = "\\section{项目经历}\n"
         for proj in project_list:
             name = escape_latex(proj.get("name", ""))
@@ -258,7 +258,7 @@ def generate_project_section(project_list, template_type="classic"):
                     section += f"  \\item {escape_latex(desc)}\n"
                 section += "\\end{itemize}\n"
         return section
-    else:  # modern
+    else:  # template2
         section = "\\sectionTitle{项目经历}{\\faiconsixbf{users}}\n"
         for proj in project_list:
             name = escape_latex(proj.get("name", ""))
@@ -277,7 +277,7 @@ def generate_project_section(project_list, template_type="classic"):
         return section
 
 
-def generate_skills_section(skills_text, template_type="classic"):
+def generate_skills_section(skills_text, template_type="template1"):
     """生成技能特长部分"""
     if not skills_text or not skills_text.strip():
         return ""
@@ -287,13 +287,13 @@ def generate_skills_section(skills_text, template_type="classic"):
         lines = [line.strip() for line in skills_text.split("\n") if line.strip()]
         if len(lines) > 1:
             # 多行，使用列表格式
-            if template_type == "classic":
+            if template_type == "template1":
                 section = "\\section{技术特长}\n\\begin{itemize}[parsep=0.2ex]\n"
                 for line in lines:
                     section += f"  \\item {escape_latex(line)}\n"
                 section += "\\end{itemize}\n"
                 return section
-            else:  # modern
+            else:  # template2
                 section = "\\sectionTitle{技能特长}{\\faiconsixbf{gears}}\n\\begin{onehalfspacing}\n"
                 for line in lines:
                     section += f"\\normalline{{{escape_latex(line)}}}\n"
@@ -303,13 +303,13 @@ def generate_skills_section(skills_text, template_type="classic"):
     # 单行，使用原有格式
     skills = escape_latex(skills_text)
 
-    if template_type == "classic":
+    if template_type == "template1":
         return f"""\\section{{技术特长}}
 \\begin{{itemize}}[parsep=0.2ex]
   \\item {skills}
 \\end{{itemize}}
 """
-    else:  # modern
+    else:  # template2
         return f"""\\sectionTitle{{技能特长}}{{\\faiconsixbf{{gears}}}}
 \\begin{{onehalfspacing}}
 \\normalline{{{skills}}}
@@ -317,18 +317,18 @@ def generate_skills_section(skills_text, template_type="classic"):
 """
 
 
-def generate_awards_section(awards_list, template_type="classic"):
+def generate_awards_section(awards_list, template_type="template1"):
     """生成荣誉证书部分"""
     if not awards_list:
         return ""
 
-    if template_type == "classic":
+    if template_type == "template1":
         section = "\\section{荣誉证书}\n\\begin{itemize}[parsep=0.2ex]\n"
         for award in awards_list:
             section += f"  \\item {escape_latex(award)}\n"
         section += "\\end{itemize}\n"
         return section
-    else:  # modern
+    else:  # template2
         section = "\\sectionTitle{荣誉证书}{\\faiconsixbf{award}}\n\\begin{onehalfspacing}\n"
         for award in awards_list:
             section += f"\\datedline{{{escape_latex(award)}}}{{}}\n"
@@ -336,7 +336,7 @@ def generate_awards_section(awards_list, template_type="classic"):
         return section
 
 
-def generate_summary_section(summary_text, template_type="classic"):
+def generate_summary_section(summary_text, template_type="template1"):
     """生成自我评价部分"""
     if not summary_text or not summary_text.strip():
         return ""
@@ -346,13 +346,13 @@ def generate_summary_section(summary_text, template_type="classic"):
         lines = [line.strip() for line in summary_text.split("\n") if line.strip()]
         if len(lines) > 1:
             # 多行，使用列表格式
-            if template_type == "classic":
+            if template_type == "template1":
                 section = "\\section{自我评价}\n\\begin{itemize}[parsep=0.2ex]\n"
                 for line in lines:
                     section += f"  \\item {escape_latex(line)}\n"
                 section += "\\end{itemize}\n"
                 return section
-            else:  # modern
+            else:  # template2
                 section = "\\sectionTitle{自我评价}{\\faiconsixbf{comment}}\n\\begin{onehalfspacing}\n"
                 for line in lines:
                     section += f"\\normalline{{{escape_latex(line)}}}\n"
@@ -362,13 +362,13 @@ def generate_summary_section(summary_text, template_type="classic"):
     # 单行，使用原有格式
     summary = escape_latex(summary_text)
 
-    if template_type == "classic":
+    if template_type == "template1":
         return f"""\\section{{自我评价}}
 \\begin{{itemize}}[parsep=0.2ex]
   \\item {summary}
 \\end{{itemize}}
 """
-    else:  # modern
+    else:  # template2
         return f"""\\sectionTitle{{自我评价}}{{\\faiconsixbf{{comment}}}}
 \\begin{{onehalfspacing}}
 \\normalline{{{summary}}}
@@ -376,13 +376,13 @@ def generate_summary_section(summary_text, template_type="classic"):
 """
 
 
-def generate_latex_resume(resume_data, template_type="classic", has_photo=False, module_order=None):
+def generate_latex_resume(resume_data, template_type="template1", has_photo=False, module_order=None):
     """
     生成完整的LaTeX简历
 
     Args:
         resume_data: 简历数据字典
-        template_type: 模板类型 ("classic" 或 "modern")
+        template_type: 模板类型 ("template1" 或 "template2")
         has_photo: 是否包含照片
         module_order: 自定义模块顺序列表，如 ["education", "skills", "workExperience", ...]
                      如果为None，使用默认顺序
@@ -391,7 +391,7 @@ def generate_latex_resume(resume_data, template_type="classic", has_photo=False,
         LaTeX代码字符串
     """
     # 文档头部
-    if template_type == "classic":
+    if template_type == "template1":
         preamble = """% !TEX TS-program = xelatex
 % !TEX encoding = UTF-8 Unicode
 % !Mode:: "TeX:UTF-8"
@@ -407,7 +407,7 @@ def generate_latex_resume(resume_data, template_type="classic", has_photo=False,
 \\pagenumbering{gobble}
 
 """
-    else:  # modern
+    else:  # template2
         preamble = """% !TEX TS-program = xelatex
 % !TEX encoding = UTF-8 Unicode
 % !Mode:: "TeX:UTF-8"
@@ -430,10 +430,10 @@ def generate_latex_resume(resume_data, template_type="classic", has_photo=False,
     # 生成各个部分
     basic_info = resume_data.get("basicInfo", {})
 
-    if template_type == "classic":
-        header = generate_classic_header(basic_info, has_photo)
+    if template_type == "template1":
+        header = generate_template1_header(basic_info, has_photo)
     else:
-        header = generate_modern_header(basic_info, has_photo)
+        header = generate_template2_header(basic_info, has_photo)
 
     # 创建模块生成器映射
     module_generators = {

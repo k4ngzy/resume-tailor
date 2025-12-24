@@ -136,32 +136,32 @@ if st.session_state.current_step == "template_selection":
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("### 📘 经典模板")
-        st.image("./images/classic.png", width="stretch")
+        st.markdown("### 📘 模板1")
+        st.image("./images/template1.png", width="stretch")
         if st.button(
-            "选择经典模板",
+            "选择模板1",
             width="stretch",
-            type="primary" if st.session_state.selected_template == "classic" else "secondary",
+            type="primary" if st.session_state.selected_template == "template1" else "secondary",
         ):
-            st.session_state.selected_template = "classic"
-            st.success("✅ 已选择经典模板")
+            st.session_state.selected_template = "template1"
+            st.success("✅ 已选择模板1")
 
     with col2:
-        st.markdown("### 📗 现代模板")
-        st.image("./images/modern.png", width="stretch")
+        st.markdown("### 📗 模板2")
+        st.image("./images/template2.png", width="stretch")
         if st.button(
-            "选择现代模板",
+            "选择模板2",
             width="stretch",
-            type="primary" if st.session_state.selected_template == "modern" else "secondary",
+            type="primary" if st.session_state.selected_template == "template2" else "secondary",
         ):
-            st.session_state.selected_template = "modern"
-            st.success("✅ 已选择现代模板")
+            st.session_state.selected_template = "template2"
+            st.success("✅ 已选择模板2")
 
     st.markdown("---")
 
     # 显示当前选择
     if st.session_state.selected_template:
-        template_name = "经典模板" if st.session_state.selected_template == "classic" else "现代模板"
+        template_name = "模板1" if st.session_state.selected_template == "template1" else "模板2"
         st.info(f"当前选择: {template_name}")
 
         if st.button("📝 继续填写简历", width="stretch", type="primary"):

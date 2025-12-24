@@ -479,7 +479,9 @@ async def generate_pdf(
                 print("⚠️ 模块顺序解析失败，使用默认顺序")
 
         template_dir = (
-            Path(__file__).parent.parent / "resume-template" / ("classic" if template_type == "classic" else "modern")
+            Path(__file__).parent.parent
+            / "resume-template"
+            / ("template1" if template_type == "template1" else "template2")
         )
 
         # 确定是否有照片

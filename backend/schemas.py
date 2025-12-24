@@ -21,5 +21,5 @@ class ModifyResumeModuleRequest(BaseModel):
 
 class GeneratePDFRequest(BaseModel):
     session_id: str
-    template_type: str  # "classic" or "modern"
+    template_type: str  # "template1" or "template2"
     module_order: list[str] | None = None  # 自定义模块顺序
